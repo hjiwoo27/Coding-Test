@@ -1,0 +1,27 @@
+
+T = int(input()) # 테스트 케이스의 개수
+
+for _ in range(T):
+    n = int(input()) # 각 테스트 케이스의 첫째 줄에는 n이 주어짐 
+
+    score = []
+    for i in range(2): # 두 줄에 걸쳐 n개의 정수=score 가 주어짐 
+        s = list(map(int, input().split()))
+        score.append(s)
+    
+    dp = [[0]*n for _ in range(2)]
+
+    if n==1:
+        print(max(score[0][0], score[1][0]))
+    
+    else:
+        dp[0][0]= score[0][0]
+        dp[1][0]= score[1][0]
+        dp[0][1]= dp[1][0]+score[0][1]
+        dp[1][1]= dp[0][0]+score[1][1]
+
+        for i in range(2,n):
+            dp[0][i]=max(score[0][i]+dp[1][i-1],score[0][i]+dp[1][i-2])
+            dp[1][i]=max(score[1][i]+dp[0][i-1],score[1][i]+dp[0][i-2])
+
+        print(max(dp[0][n-1], dp[1][n-1]))
