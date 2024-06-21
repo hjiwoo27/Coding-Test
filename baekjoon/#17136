@@ -1,0 +1,83 @@
+array=[]
+
+# base 배열 입력
+for _ in range(10):
+    row = list(map(int, input().split()))
+    array.append(row)
+
+paper_list = 5*[5] # 사용되지 않은 색종이 상태는 0으로 표시
+
+# 색종이를 붙일 수 있는지 확인
+def check_possible(x,y,n):
+    for i in range(x,x+n):
+        for j in range(y,y+n):
+            if not (0<=i<10 and 0<=j<10): # 색종이가 base를 넘어가면 false 
+                return False
+            if array[i][j] !=1: # 시작점이 1이 아니라면 false 
+                return False
+    return True
+
+# 5부터 1까지 줄이면서 현재 위치에서 붙일 수 있는 가장 큰 색종이 크기를 구하기
+def find_MaxNum(x,y):
+    for n in range(5,0,-1): 
+        if check_possible(x,y,n):
+            return n
+
+# 색종이 붙이기         
+def attach(x,y,n):
+    for i in range(x,x+n):
+        for j in range(y,y+n):
+            array[i][j]=0 # 색종이 붙인 부분은 0으로 바꿈 
+
+def detach(x,y,n):
+    for i in range(x,x+n):
+        for j in range(y,y+n):
+            array[i][j]=1
+
+# 색종이가 base의 모든 1을 커버했는지 확인
+def check_finish():
+    for i in range(10):
+        for j in range(10):
+            if array[i][j]==1:
+                return False
+    return True
+
+
+result =26
+
+def dfs(cnt):
+    global result
+
+    if cnt>result:
+        return
+    
+    F=0
+    for i in range(10):
+        for j in range(10):
+            if array[i][j] == 1:
+                r,c = i,j
+                F=1
+                break
+        if F==1:
+            break
+        
+    if F==0:
+        if cnt<result:
+            result=cnt
+        return
+        
+    for size in range(5,0,-1): 
+        if check_possible(r,c,size) and paper_list[size]>0: 
+            attach(r,c,size)    
+            paper_list[size]-=1
+            dfs(cnt+1)
+            detach(r,c,size)
+            paper_list[size]+=1
+
+dfs(0)
+
+
+if result==26 :
+    print(-1)
+else: 
+    print(result)
